@@ -8,7 +8,7 @@ from IPython.display import HTML, display
 
 # Step 1: Initialize Gemini Client
 # Replace with your actual Gemini API key or set it in your environment
-os.environ["GEMINI_API_KEY"] = "YOUR_GEMINI_API_KEY"
+os.environ["GEMINI_API_KEY"] = AQ.Ab8RN6L1LWXnIFIqQqwgYfKO0rsBkTUrjLtX0X6UwaasMAeB9Q
 client = genai.Client()
 
 # Step 2: Function to extract text from all PDFs in the repository
