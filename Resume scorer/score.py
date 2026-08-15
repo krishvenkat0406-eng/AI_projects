@@ -7,9 +7,12 @@ from google.genai import types
 from IPython.display import HTML, display
 
 # Step 1: Initialize Gemini Client
-# Replace with your actual Gemini API key or set it in your environment
-os.environ["GEMINI_API_KEY"] = ""
-client = genai.Client()
+# Reads GEMINI_API_KEY directly from environment variable / GitHub Codespaces secret
+api_key = os.environ.get("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("GEMINI_API_KEY environment variable is missing or empty.")
+
+client = genai.Client(api_key=api_key)
 
 # Step 2: Function to extract text from all PDFs in the repository
 def extract_repo_pdfs(directory="."):
@@ -47,7 +50,7 @@ def evaluate_resume(filename, resume_text):
     """
     
     response = client.models.generate_content(
-        model='gemini-2.5-flash',
+        model='gemini-2.0-flash',
         contents=prompt,
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
@@ -97,23 +100,26 @@ def generate_html_report(evaluations):
     return full_html
 
 # --- Pipeline Execution ---
-# 1. Read files
-resumes = extract_repo_pdfs(".")
+if __name__ == "__main__":
+    # 1. Read files
+    resumes = extract_repo_pdfs(".")
 
-# 2. Evaluate with Gemini
-evaluations = []
-for filename, text in resumes.items():
-    print(f"Evaluating {filename} with Gemini...")
-    result = evaluate_resume(filename, text)
-    result['filename'] = filename
-    evaluations.append(result)
+    if not resumes:
+        print("No PDF files found to evaluate.")
+    else:
+        # 2. Evaluate with Gemini
+        evaluations = []
+        for filename, text in resumes.items():
+            print(f"Evaluating {filename} with Gemini...")
+            result = evaluate_resume(filename, text)
+            result['filename'] = filename
+            evaluations.append(result)
 
-# 3. Generate and output HTML
-html_output = generate_html_report(evaluations)
+        # 3. Generate and output HTML
+        html_output = generate_html_report(evaluations)
 
-# Save to disk
-with open("resume_evaluation_report.html", "w", encoding="utf-8") as f:
-    f.write(html_output)
+        # Save to disk
+        with open("resume_evaluation_report.html", "w", encoding="utf-8") as f:
+            f.write(html_output)
 
-# Display inline inside notebook
-display(HTML(html_output))
+        print("Successfully generated resume_evaluation_report.html!")
