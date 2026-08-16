@@ -6,3 +6,6 @@ duckdb
 pandas
 plotly
 python-dotenv
+fastapi
+uvicorn
+jinja2
