@@ -1,0 +1,8 @@
+langgraph
+langchain
+langchain-openai
+sqlalchemy
+duckdb
+pandas
+plotly
+python-dotenv
